@@ -8,7 +8,25 @@ ini_set('display_errors', '1');
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>test</title>
         <style type="text/css">
-
+            html,body{
+            font-family: Helvetica;
+            font-size: 8pt;
+            }
+            #top-menu-item{
+                border-top: 1px solid white;
+                border-left: 1px solid white;
+            }
+            ul{list-style: none;
+               margin-left: 0;
+              
+               
+           
+            }
+            a{text-decoration: none;color: white;}
+            li{ background-color: #333333;color: white;}
+            #top-menu-item > li {display: inline-block; float:left; width: 120px; height:20px;}
+            #top-menu-item > li ul { display: block; float: none;position: relative;}
+                #top-menu-item > li > ul{}
         </style>
     </head>
     <body>
@@ -18,7 +36,7 @@ ini_set('display_errors', '1');
 
             var $page;
             var $name;
-            var $subMenus=array(); // array of SubMenus
+            var $subMenus = array(); // array of SubMenus
 
             function Menu($page_, $name_) {
                 $this->page = $page_;
@@ -44,18 +62,35 @@ ini_set('display_errors', '1');
                 $this->name = $name_;
                 $this->subMenus = array();
             }
+
         }
 
         class MenuManager {
 
             var $menu_items = array();
 
+            ///Usage: 
+            ///  
+            //  MenuManager->AddTopMenu('some-key','/some/page','Some Page');
+            /// The first parameter is a unique key needed per top menu.
+            /// returns a reference to the created top menu object so that you can manipulate
+            /// it further downstream (i.e., changing page or name)
+            /// If you need the object to change the title(name) of the menu item, for example, do the following:
+            /// $newmenu = MenuManager->AddTopMenu('some-key','/some/page','Some Page');
+            ///  ...
+            /// $newmenu->name ='new name'; 
+            ///
+            /// The above code will be reflected in the output.
             public function &AddTopMenu($key, $page, $name) {
                 $menu = new TopMenu($page, $name);
                 $this->menu_items[$key] = $menu;
                 return $menu;
             }
 
+            /// Usage:
+            /// MenuManager->addSubMenu('some-key','/some/page','Some Page')
+            /// Adds a submenu to a *preexisting* menu item.  Also returns a reference to the
+            /// new submenu object instance in case you need to manipulate elsewhere in the code.
             public function &addSubMenu($key, $page, $name) {
                 if (array_key_exists($key, $this->menu_items)) {
                     return $this->menu_items[$key]->addSubMenu($page, $name);
@@ -64,8 +99,9 @@ ini_set('display_errors', '1');
                 return NULL;
             }
 
+            ///Displays HTML output of menus
             function displayLandingPageBulletList() {
-                echo '<ul class="top-menu-item">';
+                echo '<ul id="top-menu-item">';
                 $keys = array_keys($this->menu_items);
                 foreach ($this->menu_items as $key => $value) {
                     $menu = $this->menu_items[$key];
@@ -76,7 +112,7 @@ ini_set('display_errors', '1');
 
             private function createMenuItem($menu) {
 
-                echo "<li><a href='$menu->page' >$menu->name</a>";
+                echo "<li><a href='$menu->page' title='$menu->name'>$menu->name</a>";
                 if (count($menu->getSubMenus()) > 0) {
                     echo '<ul>';
                     $subs = $menu->getSubMenus();
@@ -93,16 +129,19 @@ ini_set('display_errors', '1');
         }
 
 //usage
+
+
         $mm = new MenuManager();
-        $mm->AddTopMenu("topmenu1", "/some/page", "top menu 1");
+        ///creating a top menu item with the title 
+        $mm->AddTopMenu("google", "http://google.com", "Google");
         //var_dump($mm);
-        $mm->addSubMenu("topmenu1", "/some/page", "sub menu 1");
+        $mm->addSubMenu("google", "https://www.google.com/search?q=cats", "Search Cats");
 
-        $mm->addTopMenu("topmenu2", "/some/page", "top menu 2");
+        $mm->addTopMenu("reddit", "http://reddit.com", "Waste your time...");
 
-        $x= $mm->addSubMenu("topmenu1", "/some/page", "sub menu 2");
-var_dump($x);
-$x->addSubMenu("asdasd","wergwrgw");
+        $x = $mm->addSubMenu("reddit", "http://reddit.com/r/wtf", "wtf?!");
+        //var_dump($x);
+        $x->addSubMenu("asdasd", "wergwrgw");
 
 //var_dump($mm);
         $mm->displayLandingPageBulletList();
