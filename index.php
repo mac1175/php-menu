@@ -83,6 +83,7 @@ ini_set('display_errors', '1');
         class MenuManager {
 
             var $menu_items = array();
+            var $string_output = array();
 
             ///Usage: 
             ///  
@@ -102,6 +103,16 @@ ini_set('display_errors', '1');
                 return $menu;
             }
 
+            private function appendOutput($val) {
+                if (is_string($val)) {
+                    array_push($this->string_output, $val);
+                }
+            }
+
+            private function getOutput() {
+                return implode("", $this->string_output);
+            }
+
             /// Usage:
             /// MenuManager->addSubMenu('some-key','/some/page','Some Page')
             /// Adds a submenu to a *preexisting* menu item.  Also returns a reference to the
@@ -116,29 +127,30 @@ ini_set('display_errors', '1');
 
             ///Displays HTML output of menus
             function displayLandingPageBulletList() {
-                echo '<ul id="menu">';
+                $this->appendOutput('<ul id="menu">');
                 $keys = array_keys($this->menu_items);
                 foreach ($this->menu_items as $key => $value) {
                     $menu = $this->menu_items[$key];
                     $this->createMenuItem($menu);
                 }
-                echo '</ul>';
+                $this->appendOutput('</ul>');
+                return $this->getOutput();
             }
 
             private function createMenuItem($menu) {
 
-                echo "<li><a href='$menu->page' title='$menu->name'>$menu->name</a>";
+                $this->appendOutput("<li><a href='$menu->page' title='$menu->name'>$menu->name</a>");
                 if (count($menu->getSubMenus()) > 0) {
-                    echo '<ul>';
+                    $this->appendOutput('<ul>');
                     $subs = $menu->getSubMenus();
                     for ($m = 0; $m < count($subs); $m++
                     ) {
                         $sub = $subs[$m];
                         $this->createMenuItem($sub);
                     }
-                    echo '</ul>';
+                    $this->appendOutput('</ul>');
                 }
-                echo '</li>';
+                $this->appendOutput('</li>');
             }
 
         }
@@ -165,7 +177,7 @@ ini_set('display_errors', '1');
         $x->addSubMenu("asdasd", "wergwrgw");
 
 //var_dump($mm);
-        $mm->displayLandingPageBulletList();
+        echo $mm->displayLandingPageBulletList();
         ?>
     </body>
 </html>
