@@ -1,4 +1,5 @@
 Class Definitions:
+```php
 class SubMenu
 {
 var $page;
@@ -67,3 +68,4 @@ echo '<li><a href="' . $topMenu->subMenus[$j]->page . '">' . $topMenu->subMenus[
 }
 echo '</ul>';
 }
+```
