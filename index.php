@@ -8,25 +8,40 @@ ini_set('display_errors', '1');
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>test</title>
         <style type="text/css">
-            html,body{
-            font-family: Helvetica;
-            font-size: 8pt;
-            }
-            #top-menu-item{
-                border-top: 1px solid white;
-                border-left: 1px solid white;
-            }
-            ul{list-style: none;
-               margin-left: 0;
-              
-               
-           
-            }
-            a{text-decoration: none;color: white;}
-            li{ background-color: #333333;color: white;}
-            #top-menu-item > li {display: inline-block; float:left; width: 120px; height:20px;}
-            #top-menu-item > li ul { display: block; float: none;position: relative;}
-                #top-menu-item > li > ul{}
+            /* These styles create the dropdown menus. */
+            #menu {
+                position: absolute;
+                top: 0;
+                left: 0;
+                margin: 0;
+                padding: 0;}
+            #menu li {
+                list-style: none;
+                float: left; }
+            #menu li a {
+                display: block;
+                padding: 3px 8px;
+                text-transform: uppercase;
+                text-decoration: none; 
+                color: #999;
+                font-weight: bold; }
+            #menu li a:hover {
+                color: #000; }
+            #menu li ul {
+                display: none;  }
+            #menu li:hover ul, #menu li.hover ul {
+                position: relative;
+                display: inline-block;
+                left: 0;
+                width: 100%;
+                margin: 0;
+                padding: 0; }
+            #menu li:hover li, #menu li.hover li {
+                float: left; }
+            #menu li:hover li a, #menu li.hover li a {
+                color: #000; }
+            #menu li li a:hover {
+                color: #357; }
         </style>
     </head>
     <body>
@@ -101,7 +116,7 @@ ini_set('display_errors', '1');
 
             ///Displays HTML output of menus
             function displayLandingPageBulletList() {
-                echo '<ul id="top-menu-item">';
+                echo '<ul id="menu">';
                 $keys = array_keys($this->menu_items);
                 foreach ($this->menu_items as $key => $value) {
                     $menu = $this->menu_items[$key];
@@ -133,6 +148,12 @@ ini_set('display_errors', '1');
 
         $mm = new MenuManager();
         ///creating a top menu item with the title 
+
+
+        $mm->AddTopMenu("account", "", "My Account");
+
+        $mm->AddTopMenu("stuff", "http://news.google.com", "Stuff");
+
         $mm->AddTopMenu("google", "http://google.com", "Google");
         //var_dump($mm);
         $mm->addSubMenu("google", "https://www.google.com/search?q=cats", "Search Cats");
